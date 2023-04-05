@@ -10,7 +10,7 @@ public class ClipboardRepository
     public ClipboardRepository(string connectionString)
     {
         var mongoClient = new MongoClient(connectionString);
-        var database = mongoClient.GetDatabase("clipboard-service");
+        var database = mongoClient.GetDatabase("clipboard-api");
         _clipboards = database.GetCollection<ClipboardContract>("clipboards");
     }
 

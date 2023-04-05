@@ -10,7 +10,7 @@ public class RecordRepository
     public RecordRepository(string connectionString)
     {
         var mongoClient = new MongoClient(connectionString);
-        var database = mongoClient.GetDatabase("clipboard-service");
+        var database = mongoClient.GetDatabase("clipboard-api");
         _records = database.GetCollection<RecordContract>("records");
     }
 
