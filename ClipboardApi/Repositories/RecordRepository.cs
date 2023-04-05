@@ -16,11 +16,9 @@ public class RecordRepository
 
     public async Task<List<RecordContract>> GetRecordsByClipboardId(Guid clipboardId)
     {
-        var query = await _records.FindAsync(r => r.ClipboardId == clipboardId);
-
-        var records = await query.ToListAsync();
-        records.Sort((x, y) => DateTime.Compare(x.Date, y.Date));
-        return records;
+        var devices = await _records.Find(r => r.ClipboardId == clipboardId).ToListAsync();
+        devices.Sort((x, y) => DateTime.Compare(x.Date, y.Date));
+        return devices;
     }
 
     public async Task<RecordContract> AddRecordToClipboard(Guid clipboardId, string contentType, string content)
