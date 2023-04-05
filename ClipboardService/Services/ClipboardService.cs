@@ -1,7 +1,5 @@
 using ClipboardService.Models;
 using ClipboardService.Repositories;
-using ClipboardService.Repositories.Contracts;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ClipboardService.Services;
 
@@ -21,15 +19,12 @@ public class ClipboardService
         var clipboardContract = await _clipboardRepository.CreateClipboardForUser(userId);
         return new Clipboard(clipboardContract.Id, new List<Record>());
     }
-    
+
     public async Task<Clipboard?> GetClipboardByUserId(Guid userId)
     {
         var clipboardContract = await _clipboardRepository.GetClipboardByUserId(userId);
 
-        if (clipboardContract == null)
-        {
-            return null;
-        }
+        if (clipboardContract == null) return null;
 
         var recordContracts = await _recordRepository.GetRecordsByClipboardId(clipboardContract.Id);
         var records = recordContracts.Select(r => new Record(r.Id, r.Date, r.ContentType, r.Content)).ToList();

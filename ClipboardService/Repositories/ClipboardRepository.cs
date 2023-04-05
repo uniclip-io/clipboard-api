@@ -18,10 +18,7 @@ public class ClipboardRepository
     {
         var found = await GetClipboardByUserId(userId);
 
-        if (found != null)
-        {
-            throw new ArgumentException("User already has a clipboard.");
-        }
+        if (found != null) throw new ArgumentException("User already has a clipboard.");
 
         var clipboardContract = new ClipboardContract(Guid.NewGuid(), userId);
         await _clipboards.InsertOneAsync(clipboardContract);

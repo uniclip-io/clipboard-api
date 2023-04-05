@@ -14,7 +14,7 @@ public class ClipboardController : ControllerBase
     {
         _clipboardService = clipboardService;
     }
-    
+
     [HttpPost("/post/")]
     public async Task<ActionResult<Record>> PostClipboardContent(PostClipboardContent postClipboardContent)
     {

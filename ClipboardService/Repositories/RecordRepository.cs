@@ -13,7 +13,7 @@ public class RecordRepository
         var database = mongoClient.GetDatabase("clipboard-service");
         _records = database.GetCollection<RecordContract>("records");
     }
-    
+
     public async Task<List<RecordContract>> GetRecordsByClipboardId(Guid clipboardId)
     {
         var query = await _records.FindAsync(r => r.ClipboardId == clipboardId);
