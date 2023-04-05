@@ -5,7 +5,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton(_ => new ClipboardRepository(builder.Configuration["ConnectStrings:MongoDb"]!));
+builder.Services.AddSingleton(_ => new ClipboardRepository(builder.Configuration["ConnectionStrings:MongoDb"]!));
+builder.Services.AddSingleton(_ => new RecordRepository(builder.Configuration["ConnectionStrings:MongoDb"]!));
 builder.Services.AddScoped<ClipboardService.Services.ClipboardService, ClipboardService.Services.ClipboardService>();
 
 var app = builder.Build();
