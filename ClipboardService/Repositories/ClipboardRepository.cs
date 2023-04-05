@@ -23,9 +23,8 @@ public class ClipboardRepository
             throw new ArgumentException("User already has a clipboard.");
         }
 
-        var clipboardContract = new ClipboardContract(Guid.NewGuid(), userId, new List<Guid>());
+        var clipboardContract = new ClipboardContract(Guid.NewGuid(), userId);
         await _clipboards.InsertOneAsync(clipboardContract);
-
         return clipboardContract;
     }
 

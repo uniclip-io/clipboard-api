@@ -20,16 +20,13 @@ public class RecordRepository
 
         var records = await query.ToListAsync();
         records.Sort((x, y) => DateTime.Compare(x.Date, y.Date));
-        
         return records;
     }
 
     public async Task<RecordContract> AddRecordToClipboard(Guid clipboardId, string contentType, string content)
     {
         var recordContract = new RecordContract(Guid.NewGuid(), clipboardId, DateTime.Now, contentType, content);
-
         await _records.InsertOneAsync(recordContract);
-
         return recordContract;
     }
 }

@@ -22,12 +22,18 @@ public class ClipboardService
         return new Clipboard(clipboardContract.Id, new List<Record>());
     }
     
-    public async Task<Clipboard> GetClipboardByUserId(Guid userId)
+    public async Task<Clipboard?> GetClipboardByUserId(Guid userId)
     {
         var clipboardContract = await _clipboardRepository.GetClipboardByUserId(userId);
+
+        if (clipboardContract == null)
+        {
+            return null;
+        }
+
         var recordContracts = await _recordRepository.GetRecordsByClipboardId(clipboardContract.Id);
         var records = recordContracts.Select(r => new Record(r.Id, r.Date, r.ContentType, r.Content)).ToList();
-        
+
         return new Clipboard(clipboardContract.Id, records);
     }
 
