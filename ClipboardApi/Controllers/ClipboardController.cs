@@ -1,5 +1,6 @@
 using ClipboardApi.Dtos;
 using ClipboardApi.Models;
+using ClipboardApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClipboardApi.Controllers;
@@ -8,9 +9,9 @@ namespace ClipboardApi.Controllers;
 [Route("clipboard")]
 public class ClipboardController : ControllerBase
 {
-    private readonly Services.ClipboardService _clipboardService;
+    private readonly ClipboardService _clipboardService;
 
-    public ClipboardController(Services.ClipboardService clipboardService)
+    public ClipboardController(ClipboardService clipboardService)
     {
         _clipboardService = clipboardService;
     }

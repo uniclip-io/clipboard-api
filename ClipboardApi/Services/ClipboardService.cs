@@ -17,7 +17,7 @@ public class ClipboardService
     public async Task<Clipboard> CreateClipboard(Guid userId)
     {
         var clipboardContract = await _clipboardRepository.CreateClipboardForUser(userId);
-        return new Clipboard(clipboardContract.Id, new List<Record>());
+        return new Clipboard(clipboardContract.Id, userId, new List<Record>());
     }
 
     public async Task<Clipboard?> GetClipboardByUserId(Guid userId)
@@ -29,7 +29,7 @@ public class ClipboardService
         var recordContracts = await _recordRepository.GetRecordsByClipboardId(clipboardContract.Id);
         var records = recordContracts.Select(r => new Record(r.Id, r.Date, r.ContentType, r.Content)).ToList();
 
-        return new Clipboard(clipboardContract.Id, records);
+        return new Clipboard(clipboardContract.Id, userId, records);
     }
 
     public async Task<Record> AddContentToClipboard(Guid clipboardId, string contentType, string content)
