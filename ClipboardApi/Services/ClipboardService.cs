@@ -1,7 +1,7 @@
-using ClipboardService.Models;
-using ClipboardService.Repositories;
+using ClipboardApi.Models;
+using ClipboardApi.Repositories;
 
-namespace ClipboardService.Services;
+namespace ClipboardApi.Services;
 
 public class ClipboardService
 {

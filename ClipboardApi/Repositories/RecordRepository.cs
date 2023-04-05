@@ -1,7 +1,7 @@
-using ClipboardService.Repositories.Contracts;
+using ClipboardApi.Repositories.Contracts;
 using MongoDB.Driver;
 
-namespace ClipboardService.Repositories;
+namespace ClipboardApi.Repositories;
 
 public class RecordRepository
 {

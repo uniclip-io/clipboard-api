@@ -1,8 +1,8 @@
-using ClipboardService.Dtos;
-using ClipboardService.Models;
+using ClipboardApi.Dtos;
+using ClipboardApi.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ClipboardService.Controllers;
+namespace ClipboardApi.Controllers;
 
 [ApiController]
 [Route("clipboard")]

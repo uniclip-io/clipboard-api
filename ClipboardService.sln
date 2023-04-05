@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipboardService", "ClipboardService\ClipboardService.csproj", "{C0619764-AFAF-4A45-91A3-5C3750376ACC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipboardApi", "ClipboardApi\ClipboardApi.csproj", "{C0619764-AFAF-4A45-91A3-5C3750376ACC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,4 +1,4 @@
-namespace ClipboardService.Models;
+namespace ClipboardApi.Models;
 
 public record Record
 (

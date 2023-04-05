@@ -1,4 +1,4 @@
-namespace ClipboardService.Repositories.Contracts;
+namespace ClipboardApi.Repositories.Contracts;
 
 public record RecordContract
 (

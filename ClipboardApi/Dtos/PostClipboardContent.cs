@@ -1,4 +1,4 @@
-namespace ClipboardService.Dtos;
+namespace ClipboardApi.Dtos;
 
 public record PostClipboardContent
 (
