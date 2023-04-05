@@ -16,7 +16,7 @@ public class ClipboardController : ControllerBase
         _clipboardService = clipboardService;
     }
 
-    [HttpPost("/post/")]
+    [HttpPost("/post")]
     public async Task<ActionResult<Record>> PostClipboardContent(PostClipboardContent postClipboardContent)
     {
         var userId = postClipboardContent.userId;
