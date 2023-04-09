@@ -34,10 +34,10 @@ public class RabbitMqService : IDisposable
             var raw = Encoding.UTF8.GetString(args.Body.ToArray());
             var message = JsonConvert.DeserializeObject<ClipboardLog>(raw);
 
-            // if (message != null)
-            // {
+            if (message != null)
+            {
                 messageHandler(message);
-            // }
+            }
         };
 
         _channel.BasicConsume(_queueName, true, consumer);
