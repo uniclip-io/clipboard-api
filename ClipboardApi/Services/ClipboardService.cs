@@ -8,10 +8,11 @@ public class ClipboardService
     private readonly ClipboardRepository _clipboardRepository;
     private readonly RecordRepository _recordRepository;
 
-    public ClipboardService(ClipboardRepository clipboardRepository, RecordRepository recordRepository)
+    public ClipboardService(ClipboardRepository clipboardRepository, RecordRepository recordRepository, RabbitMqService rabbitMqService)
     {
         _clipboardRepository = clipboardRepository;
         _recordRepository = recordRepository;
+        rabbitMqService.OnClipboard(Console.WriteLine);
     }
 
     public async Task<Clipboard> CreateClipboard(Guid userId)
