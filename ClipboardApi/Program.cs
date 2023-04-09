@@ -1,3 +1,5 @@
+using Bugsnag;
+using ClipboardApi.Middlewares;
 using ClipboardApi.Repositories;
 using ClipboardApi.Services;
 
@@ -6,6 +8,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSingleton<IClient>(_ => new Client(builder.Configuration["ApiKeys:Bugsnag"]));
 builder.Services.AddSingleton(_ => new ClipboardRepository(builder.Configuration["ConnectionStrings:MongoDb"]!));
 builder.Services.AddSingleton(_ => new RecordRepository(builder.Configuration["ConnectionStrings:MongoDb"]!));
 builder.Services.AddSingleton(_ => new RabbitMqService(builder.Configuration["ConnectionStrings:RabbitMq"]!));
@@ -24,6 +27,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<HttpExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
