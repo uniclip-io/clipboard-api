@@ -14,7 +14,13 @@ public class ClipboardService
     {
         _clipboardRepository = clipboardRepository;
         _recordRepository = recordRepository;
-        rabbitMqService.OnClipboard(log => AddContentToClipboard(Guid.Empty, log.Type.ToString(), log.Content));
+        rabbitMqService.OnClipboard(async log =>
+        {
+            Console.WriteLine(log);
+            var userId = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6"); // TODO
+            var clipboard = await GetClipboardByUserId(userId) ?? await CreateClipboard(userId);
+            await AddContentToClipboard(clipboard.Id, log.Type.ToString(), log.Content);
+        });
     }
 
     public async Task<Clipboard> CreateClipboard(Guid userId)
