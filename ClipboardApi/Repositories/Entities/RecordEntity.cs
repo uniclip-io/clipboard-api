@@ -1,6 +1,6 @@
-namespace ClipboardApi.Repositories.Contracts;
+namespace ClipboardApi.Repositories.Entities;
 
-public record RecordContract
+public record RecordEntity
 (
     Guid Id,
     Guid ClipboardId,
