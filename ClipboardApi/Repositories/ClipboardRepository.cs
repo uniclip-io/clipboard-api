@@ -1,20 +1,20 @@
-using ClipboardApi.Repositories.Contracts;
+using ClipboardApi.Repositories.Entities;
 using MongoDB.Driver;
 
 namespace ClipboardApi.Repositories;
 
 public class ClipboardRepository
 {
-    private readonly IMongoCollection<ClipboardContract> _clipboards;
+    private readonly IMongoCollection<ClipboardEntity> _clipboards;
 
     public ClipboardRepository(string connectionString)
     {
         var mongoClient = new MongoClient(connectionString);
         var database = mongoClient.GetDatabase("clipboard-api");
-        _clipboards = database.GetCollection<ClipboardContract>("clipboards");
+        _clipboards = database.GetCollection<ClipboardEntity>("clipboards");
     }
 
-    public async Task<ClipboardContract> CreateClipboardForUser(Guid userId)
+    public async Task<ClipboardEntity> CreateClipboardForUser(Guid userId)
     {
         var found = await GetClipboardByUserId(userId);
 
@@ -23,12 +23,12 @@ public class ClipboardRepository
             throw new ArgumentException("User already has a clipboard.");
         }
 
-        var clipboardContract = new ClipboardContract(Guid.NewGuid(), userId);
+        var clipboardContract = new ClipboardEntity(Guid.NewGuid(), userId);
         await _clipboards.InsertOneAsync(clipboardContract);
         return clipboardContract;
     }
 
-    public async Task<ClipboardContract> GetClipboardByUserId(Guid userId)
+    public async Task<ClipboardEntity> GetClipboardByUserId(Guid userId)
     {
         return await _clipboards.Find(c => c.UserId == userId).FirstOrDefaultAsync();
     }
