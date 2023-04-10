@@ -1,5 +1,6 @@
 using ClipboardApi.Models;
 using ClipboardApi.Repositories;
+using Type = ClipboardApi.Dtos.Type;
 
 namespace ClipboardApi.Services;
 
@@ -8,11 +9,12 @@ public class ClipboardService
     private readonly ClipboardRepository _clipboardRepository;
     private readonly RecordRepository _recordRepository;
 
-    public ClipboardService(ClipboardRepository clipboardRepository, RecordRepository recordRepository, RabbitMqService rabbitMqService)
+    public ClipboardService(ClipboardRepository clipboardRepository, RecordRepository recordRepository,
+        RabbitMqService rabbitMqService)
     {
         _clipboardRepository = clipboardRepository;
         _recordRepository = recordRepository;
-        rabbitMqService.OnClipboard(Console.WriteLine);
+        rabbitMqService.OnClipboard(log => AddContentToClipboard(Guid.Empty, log.Type.ToString(), log.Content));
     }
 
     public async Task<Clipboard> CreateClipboard(Guid userId)
