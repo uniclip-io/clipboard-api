@@ -14,7 +14,7 @@ public class ClipboardRepository
         _clipboards = database.GetCollection<ClipboardEntity>("clipboards");
     }
 
-    public async Task<ClipboardEntity> CreateClipboardForUser(Guid userId)
+    public async Task<ClipboardEntity> CreateClipboardForUser(string userId)
     {
         var found = await GetClipboardByUserId(userId);
 
@@ -28,7 +28,7 @@ public class ClipboardRepository
         return clipboardContract;
     }
 
-    public async Task<ClipboardEntity> GetClipboardByUserId(Guid userId)
+    public async Task<ClipboardEntity> GetClipboardByUserId(string userId)
     {
         return await _clipboards.Find(c => c.UserId == userId).FirstOrDefaultAsync();
     }

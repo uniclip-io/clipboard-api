@@ -16,8 +16,8 @@ public class ClipboardController : ControllerBase
         _clipboardService = clipboardService;
     }
 
-    [HttpGet("/fetch/{userId:guid}")]
-    public async Task<ActionResult<Clipboard>> GetClipboard(Guid userId)
+    [HttpGet("/fetch/{userId}")]
+    public async Task<ActionResult<Clipboard>> GetClipboard(string userId)
     {
         var clipboard = await _clipboardService.GetClipboardByUserId(userId);
 

@@ -18,19 +18,19 @@ public class ClipboardService
 
         _rabbitMqService.OnFileUploaded(async fileContent =>
         {
-            var userId = Guid.Parse(fileContent.UserId);
+            var userId = fileContent.UserId;
             var clipboard = await GetClipboardByUserId(userId) ?? await CreateClipboard(userId);
             await AddContentToClipboard(clipboard.Id, fileContent.Type, fileContent.ContentId);
         });
     }
 
-    public async Task<Clipboard> CreateClipboard(Guid userId)
+    public async Task<Clipboard> CreateClipboard(string userId)
     {
         var clipboardContract = await _clipboardRepository.CreateClipboardForUser(userId);
         return new Clipboard(clipboardContract.Id, userId, new List<Record>());
     }
 
-    public async Task<Clipboard?> GetClipboardByUserId(Guid userId)
+    public async Task<Clipboard?> GetClipboardByUserId(string userId)
     {
         var clipboardContract = await _clipboardRepository.GetClipboardByUserId(userId);
 
