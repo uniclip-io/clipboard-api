@@ -5,6 +5,6 @@ public record RecordEntity
     Guid Id,
     Guid ClipboardId,
     DateTime Date,
-    string ContentType,
+    string Type,
     string Content
 );

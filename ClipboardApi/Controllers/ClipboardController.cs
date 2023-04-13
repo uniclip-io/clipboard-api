@@ -31,13 +31,14 @@ public class ClipboardController : ControllerBase
     [HttpPost("/post")]
     public async Task<ActionResult<Record>> PostClipboardContent(PostClipboardContent postClipboardContent)
     {
-        var userId = postClipboardContent.userId;
-        var contentType = postClipboardContent.contentType;
-        var content = postClipboardContent.content;
+        var userId = postClipboardContent.UserId;
+        var type = postClipboardContent.Type;
+        var content = postClipboardContent.Content;
 
         var clipboard = await _clipboardService.GetClipboardByUserId(userId) ??
                         await _clipboardService.CreateClipboard(userId);
-        var record = await _clipboardService.AddContentToClipboard(clipboard.Id, contentType, content);
+
+        var record = await _clipboardService.AddContentToClipboard(clipboard.Id, type, content);
 
         return Ok(record);
     }
