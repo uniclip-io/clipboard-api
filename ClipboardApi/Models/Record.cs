@@ -4,6 +4,6 @@ public record Record
 (
     Guid Id,
     DateTime Date,
-    string ContentType,
+    string Type,
     string Content
 );
