@@ -8,14 +8,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<IClient>(_ => new Client(builder.Configuration["ApiKeys:Bugsnag"]));
-builder.Services.AddSingleton(_ => new ClipboardRepository(builder.Configuration["ConnectionStrings:MongoDb"]!));
-builder.Services.AddSingleton(_ => new RecordRepository(builder.Configuration["ConnectionStrings:MongoDb"]!));
-builder.Services.AddSingleton(_ => new RabbitMqService(builder.Configuration["ConnectionStrings:RabbitMq"]!));
+builder.Services.AddSingleton<IClient>(_ => new Client(builder.Configuration["Bugsnag:ApiKey"]));
+builder.Services.AddSingleton(_ => new ClipboardRepository(builder.Configuration["MongoDb:Connection"]!));
+builder.Services.AddSingleton(_ => new RecordRepository(builder.Configuration["MongoDb:Connection"]!));
+builder.Services.AddSingleton(_ => new RabbitMqService(
+    builder.Configuration["RabbitMq:Username"]!, 
+    builder.Configuration["RabbitMq:Password"]!, 
+    builder.Configuration["RabbitMq:Uri"]!)
+);
 builder.Services.AddTransient(s => new ClipboardService(
-    s.GetService<ClipboardRepository>(),
-    s.GetService<RecordRepository>(),
-    s.GetService<RabbitMqService>()
+    s.GetService<ClipboardRepository>()!,
+    s.GetService<RecordRepository>()!,
+    s.GetService<RabbitMqService>()!
 ));
 
 var app = builder.Build();
