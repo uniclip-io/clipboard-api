@@ -14,8 +14,8 @@ builder.Services.AddSingleton(_ => new RecordRepository(builder.Configuration["M
 builder.Services.AddSingleton(_ => new RabbitMqService(
     builder.Configuration["RabbitMq:Username"]!, 
     builder.Configuration["RabbitMq:Password"]!, 
-    builder.Configuration["RabbitMq:Uri"]!)
-);
+    builder.Configuration["RabbitMq:Uri"]!
+));
 builder.Services.AddTransient(s => new ClipboardService(
     s.GetService<ClipboardRepository>()!,
     s.GetService<RecordRepository>()!,
