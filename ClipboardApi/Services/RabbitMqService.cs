@@ -20,9 +20,14 @@ public class RabbitMqService : IDisposable
     private readonly IModel _clipboardChannel;
     private readonly IModel _contentChannel;
 
-    public RabbitMqService(string hostName)
+    public RabbitMqService(string username, string password, string uri)
     {
-        var factory = new ConnectionFactory { HostName = hostName };
+        var factory = new ConnectionFactory
+        {
+            UserName = username,
+            Password = password,
+            Uri = new Uri(uri)
+        };
         _connection = factory.CreateConnection();
 
         _clipboardChannel = _connection.CreateModel();
