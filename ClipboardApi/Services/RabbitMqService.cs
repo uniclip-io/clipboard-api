@@ -37,8 +37,7 @@ public class RabbitMqService : IDisposable
 
         _contentChannel = _connection.CreateModel();
         _contentChannel.QueueDeclare(ContentQueueName, true, false, false, null);
-        _clipboardChannel.ExchangeDeclare(ContentExchangeName, ExchangeType.Topic, true, false, null);
-        _clipboardChannel.QueueBind(ContentQueueName, ContentExchangeName, "file.uploaded");
+        _contentChannel.QueueBind(ContentQueueName, ContentExchangeName, "file.uploaded");
     }
 
     public void OnFileUploaded(Action<FileContent> messageHandler)
@@ -67,7 +66,10 @@ public class RabbitMqService : IDisposable
         var json = JsonConvert.SerializeObject(record, settings);
         var message = Encoding.UTF8.GetBytes(json);
 
-        _clipboardChannel.BasicPublish(ClipboardExchangeName, "record.created", null, message);
+        for (var i = 0; i < _clipboardChannel.ConsumerCount(ClipboardQueueName); i++)
+        {
+            _clipboardChannel.BasicPublish(ClipboardExchangeName, "record.created", null, message);
+        }
     }
 
     public void Dispose()
