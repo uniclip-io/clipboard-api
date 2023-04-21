@@ -38,7 +38,7 @@ public class ClipboardController : ControllerBase
         var clipboard = await _clipboardService.GetClipboardByUserId(userId) ??
                         await _clipboardService.CreateClipboard(userId);
 
-        var record = await _clipboardService.AddContentToClipboard(clipboard.Id, type, content);
+        var record = await _clipboardService.AddContentToClipboard(userId, clipboard.Id, type, content);
 
         return Ok(record);
     }

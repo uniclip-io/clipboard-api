@@ -20,7 +20,7 @@ public class ClipboardService
         {
             var userId = fileContent.UserId;
             var clipboard = await GetClipboardByUserId(userId) ?? await CreateClipboard(userId);
-            await AddContentToClipboard(clipboard.Id, fileContent.Type, fileContent.ContentId);
+            await AddContentToClipboard(userId, clipboard.Id, fileContent.Type, fileContent.ContentId);
         });
     }
 
@@ -40,15 +40,15 @@ public class ClipboardService
         }
 
         var recordContracts = await _recordRepository.GetRecordsByClipboardId(clipboardContract.Id);
-        var records = recordContracts.Select(r => new Record(r.Id, r.Date, r.Type, r.Content)).ToList();
+        var records = recordContracts.Select(r => new Record(userId, r.Id, r.Date, r.Type, r.Content)).ToList();
 
         return new Clipboard(clipboardContract.Id, userId, records);
     }
 
-    public async Task<Record> AddContentToClipboard(Guid clipboardId, string type, string content)
+    public async Task<Record> AddContentToClipboard(string userId, Guid clipboardId, string type, string content)
     {
         var recordContract = await _recordRepository.AddRecordToClipboard(clipboardId, type, content);
-        var record = new Record(recordContract.Id, recordContract.Date, recordContract.Type, recordContract.Content);
+        var record = new Record(userId, recordContract.Id, recordContract.Date, recordContract.Type, recordContract.Content);
 
         _rabbitMqService.PublishRecord(record);
         
