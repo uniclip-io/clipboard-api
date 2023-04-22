@@ -1,5 +1,6 @@
 using ClipboardApi.Dtos;
 using System.Text;
+using System.Text.RegularExpressions;
 using ClipboardApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -85,6 +86,6 @@ internal class LowercaseContractResolver : DefaultContractResolver
 {
     protected override string ResolvePropertyName(string propertyName)
     {
-        return propertyName.ToLower();
+        return Regex.Replace(propertyName, @"^[A-Z]", m => m.Value.ToLower());
     }
 }
