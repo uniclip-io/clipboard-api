@@ -1,6 +1,7 @@
 using ClipboardApi.Dtos;
 using ClipboardApi.Models;
 using ClipboardApi.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClipboardApi.Controllers;
@@ -41,5 +42,17 @@ public class ClipboardController : ControllerBase
         var record = await _clipboardService.AddContentToClipboard(userId, clipboard.Id, type, content);
 
         return Ok(record);
+    }
+    
+    [HttpDelete("/delete/{recordId:guid}")]
+    public async Task<ActionResult<Record>> PostClipboardContent(Guid recordId)
+    {
+        var successful = await _clipboardService.RemoveContentFromClipboard(recordId);
+
+        if (!successful)
+        {
+            return NotFound();
+        }
+        return Ok();
     }
 }
