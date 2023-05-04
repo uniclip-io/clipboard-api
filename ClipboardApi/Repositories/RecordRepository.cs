@@ -27,4 +27,11 @@ public class RecordRepository
         await _records.InsertOneAsync(recordContract);
         return recordContract;
     }
+
+    public async Task<bool> RemoveContentFromClipboard(Guid recordId)
+    {
+        var result = await _records.DeleteOneAsync(r => r.Id == recordId);
+        return result.DeletedCount > 0;
+    }
+
 }

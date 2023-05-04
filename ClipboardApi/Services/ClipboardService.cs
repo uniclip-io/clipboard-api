@@ -54,4 +54,9 @@ public class ClipboardService
         
         return record;
     }
+
+    public async Task<bool> RemoveContentFromClipboard(Guid recordId)
+    {
+        return await _recordRepository.RemoveContentFromClipboard(recordId);
+    }
 }
