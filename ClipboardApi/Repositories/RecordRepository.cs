@@ -33,5 +33,4 @@ public class RecordRepository
         var result = await _records.DeleteOneAsync(r => r.Id == recordId);
         return result.DeletedCount > 0;
     }
-
 }

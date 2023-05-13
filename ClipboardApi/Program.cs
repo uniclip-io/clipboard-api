@@ -11,6 +11,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IClient>(_ => new Client(builder.Configuration["Bugsnag_ApiKey"]));
 builder.Services.AddSingleton(_ => new ClipboardRepository(builder.Configuration["MongoDb_Connection"]!));
 builder.Services.AddSingleton(_ => new RecordRepository(builder.Configuration["MongoDb_Connection"]!));
+builder.Services.AddSingleton(_ => new EncryptionService(builder.Configuration["EncryptionKey"]!));
 builder.Services.AddSingleton(_ => new RabbitMqService(
     builder.Configuration["RabbitMq_Username"]!, 
     builder.Configuration["RabbitMq_Password"]!, 
@@ -19,7 +20,8 @@ builder.Services.AddSingleton(_ => new RabbitMqService(
 builder.Services.AddTransient(s => new ClipboardService(
     s.GetService<ClipboardRepository>()!,
     s.GetService<RecordRepository>()!,
-    s.GetService<RabbitMqService>()!
+    s.GetService<RabbitMqService>()!,
+s.GetService<EncryptionService>()!
 ));
 
 var app = builder.Build();
