@@ -1,7 +1,6 @@
 using ClipboardApi.Dtos;
 using ClipboardApi.Models;
 using ClipboardApi.Services;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClipboardApi.Controllers;
@@ -20,28 +19,44 @@ public class ClipboardController : ControllerBase
     [HttpGet("/fetch/{userId}")]
     public async Task<ActionResult<Clipboard>> GetClipboard(string userId)
     {
-        var clipboard = await _clipboardService.GetClipboardByUserId(userId);
-
-        if (clipboard == null)
+        try
         {
-            return NotFound();
+            var clipboard = await _clipboardService.GetClipboardByUserId(userId);
+
+            if (clipboard == null)
+            {
+                return NotFound();
+            }
+            return Ok(clipboard);
         }
-        return Ok(clipboard);
+        catch (Exception exception)
+        {
+            Console.Write(exception);
+            return Ok();
+        }
     }
     
     [HttpPost("/post")]
     public async Task<ActionResult<Record>> PostClipboardContent(PostClipboardContent postClipboardContent)
     {
-        var userId = postClipboardContent.UserId;
-        var type = postClipboardContent.Type;
-        var content = postClipboardContent.Content;
+        try
+        {
+            var userId = postClipboardContent.UserId;
+            var type = postClipboardContent.Type;
+            var content = postClipboardContent.Content;
 
-        var clipboard = await _clipboardService.GetClipboardByUserId(userId) ??
-                        await _clipboardService.CreateClipboard(userId);
+            var clipboard = await _clipboardService.GetClipboardByUserId(userId) ??
+                            await _clipboardService.CreateClipboard(userId);
 
-        var record = await _clipboardService.AddContentToClipboard(userId, clipboard.Id, type, content);
+            var record = await _clipboardService.AddContentToClipboard(userId, clipboard.Id, type, content);
 
-        return Ok(record);
+            return Ok(record);
+        }
+        catch (Exception exception)
+        {
+            Console.Write(exception);
+            return Ok();
+        }
     }
     
     [HttpDelete("/delete/{recordId:guid}")]

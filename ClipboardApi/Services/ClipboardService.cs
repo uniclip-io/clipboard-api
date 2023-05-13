@@ -9,12 +9,14 @@ public class ClipboardService
     private readonly ClipboardRepository _clipboardRepository;
     private readonly RecordRepository _recordRepository;
     private readonly RabbitMqService _rabbitMqService;
+    private readonly EncryptionService _encryptionService;
 
-    public ClipboardService(ClipboardRepository clipboardRepository, RecordRepository recordRepository, RabbitMqService rabbitMqService)
+    public ClipboardService(ClipboardRepository clipboardRepository, RecordRepository recordRepository, RabbitMqService rabbitMqService, EncryptionService encryptionService)
     {
         _clipboardRepository = clipboardRepository;
         _recordRepository = recordRepository;
         _rabbitMqService = rabbitMqService;
+        _encryptionService = encryptionService;
 
         _rabbitMqService.OnFileUploaded(async fileContent =>
         {
@@ -40,15 +42,16 @@ public class ClipboardService
         }
 
         var recordContracts = await _recordRepository.GetRecordsByClipboardId(clipboardContract.Id);
-        var records = recordContracts.Select(r => new Record(userId, r.Id, r.Date, r.Type, r.Content)).ToList();
+        var records = recordContracts.Select(r => new Record(userId, r.Id, r.Date, r.Type, _encryptionService.Decrypt(r.Content))).ToList();
 
         return new Clipboard(clipboardContract.Id, userId, records);
     }
 
     public async Task<Record> AddContentToClipboard(string userId, Guid clipboardId, string type, string content)
     {
-        var recordContract = await _recordRepository.AddRecordToClipboard(clipboardId, type, content);
-        var record = new Record(userId, recordContract.Id, recordContract.Date, recordContract.Type, recordContract.Content);
+        var encrypted = _encryptionService.Encrypt(content);
+        var recordContract = await _recordRepository.AddRecordToClipboard(clipboardId, type, encrypted);
+        var record = new Record(userId, recordContract.Id, recordContract.Date, recordContract.Type, content);
 
         _rabbitMqService.PublishRecord(record);
         
