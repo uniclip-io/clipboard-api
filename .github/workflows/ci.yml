@@ -63,4 +63,4 @@ jobs:
       with:
         task-definition: task-definition.json
         service: ${{ secrets.AWS_SERVICE }}
-        cluster: ${{ secrets.AWS_CLUSTER_NAME }}
+        cluster: ${{ secrets.AWS_CLUSTER }}
