@@ -54,8 +54,13 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest -f ClipboardApi/Dockerfile .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-    - name: Restart ECS Task
-      uses: aws-actions/amazon-ecs-restart-task@v1
+    - name: Download Task Definition
+      run: |
+        aws ecs describe-task-definition --task-definition ClipboardApiTask --query taskDefinition > task-definition.json
+        
+    - name: Deploy to Amazon ECS
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
+        task-definition: task-definition.json
+        service: my-service
         cluster: ${{ secrets.AWS_CLUSTER }}
-        task: ${{ secrets.TASK_ARN }}
