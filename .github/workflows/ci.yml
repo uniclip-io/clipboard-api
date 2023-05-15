@@ -53,3 +53,9 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest -f ClipboardApi/Dockerfile .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+    - name: Restart ECS Task
+      uses: aws-actions/amazon-ecs-restart-task@v1
+      with:
+        cluster: ${{ secrets.AWS_CLUSTER }}
+        task: ${{ secrets.TASK_ARN }}
