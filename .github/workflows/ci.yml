@@ -72,6 +72,7 @@ jobs:
             echo $TASK_ARN 
             aws ecs stop-task --task $TASK_ARN --cluster ${{ secrets.AWS_CLUSTER }}
           fi
+
       - name: Run new task
         run: |
           aws ecs update-service --cluster ${{ secrets.AWS_CLUSTER }} --service ${{ secrets.AWS_SERVICE }} --force-new-deployment --task-definition ClipboardApiTask
