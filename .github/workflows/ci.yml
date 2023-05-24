@@ -16,7 +16,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: "7.0.x"
+          dotnet-version: '7.0.x'
 
       - name: Restore packages
         run: dotnet restore
@@ -27,40 +27,51 @@ jobs:
       - name: Test
         run: dotnet test --no-restore --verbosity normal
 
-  docker:
+  aws:
     needs: build
 
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-north-1
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Push Image to Amazon ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: uniclip/clipboard-api
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest -f ClipboardApi/Dockerfile .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+      - name: Push Image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: uniclip/clipboard-api
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest -f ClipboardApi/Dockerfile .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-    - name: Download Task Definition
-      run: |
-        aws ecs describe-task-definition --task-definition ClipboardApiTask --query taskDefinition > task-definition.json
-        
-    - name: Deploy to Amazon ECS
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: task-definition.json
-        service: ${{ secrets.AWS_SERVICE }}
-        cluster: ${{ secrets.AWS_CLUSTER }}
+      - name: Download Task Definition
+        run: |
+          aws ecs describe-task-definition --task-definition ClipboardApiTask --query taskDefinition > task-definition.json
+
+      - name: Deploy to Amazon ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          service: ${{ secrets.AWS_SERVICE }}
+          cluster: ${{ secrets.AWS_CLUSTER }}
+
+      - name: Stop old task
+        run: |
+          TASK_ARN=$(aws ecs list-tasks --cluster ${{ secrets.AWS_CLUSTER }} --service-name ${{ secrets.AWS_SERVICE }} --desired-status RUNNING --query 'taskArns[0]' --output text)
+          if [ ! -z "$TASK_ARN" ]; then
+            echo $TASK_ARN 
+            aws ecs stop-task --task $TASK_ARN --cluster ${{ secrets.AWS_CLUSTER }}
+          fi
+      - name: Run new task
+        run: |
+          aws ecs update-service --cluster ${{ secrets.AWS_CLUSTER }} --service ${{ secrets.AWS_SERVICE }} --force-new-deployment --task-definition ClipboardApiTask
