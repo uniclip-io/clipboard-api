@@ -19,44 +19,28 @@ public class ClipboardController : ControllerBase
     [HttpGet("/fetch/{userId}")]
     public async Task<ActionResult<Clipboard>> GetClipboard(string userId)
     {
-        try
-        {
-            var clipboard = await _clipboardService.GetClipboardByUserId(userId);
+        var clipboard = await _clipboardService.GetClipboardByUserId(userId);
 
-            if (clipboard == null)
-            {
-                return NotFound();
-            }
-            return Ok(clipboard);
-        }
-        catch (Exception exception)
+        if (clipboard == null)
         {
-            Console.Write(exception);
-            return Ok();
+            return NotFound();
         }
+        return Ok(clipboard);
     }
     
     [HttpPost("/post")]
     public async Task<ActionResult<Record>> PostClipboardContent(PostClipboardContent postClipboardContent)
     {
-        try
-        {
-            var userId = postClipboardContent.UserId;
-            var type = postClipboardContent.Type;
-            var content = postClipboardContent.Content;
+        var userId = postClipboardContent.UserId;
+        var type = postClipboardContent.Type;
+        var content = postClipboardContent.Content;
 
-            var clipboard = await _clipboardService.GetClipboardByUserId(userId) ??
-                            await _clipboardService.CreateClipboard(userId);
+        var clipboardId = await _clipboardService.GetClipboardByUserId(userId) ??
+                        await _clipboardService.CreateClipboard(userId);
 
-            var record = await _clipboardService.AddContentToClipboard(userId, clipboard.Id, type, content);
+        var record = await _clipboardService.AddContentToClipboard(userId, clipboardId, type, content);
 
-            return Ok(record);
-        }
-        catch (Exception exception)
-        {
-            Console.Write(exception);
-            return Ok();
-        }
+        return Ok(record);
     }
     
     [HttpDelete("/delete/{recordId:guid}")]

@@ -21,30 +21,21 @@ public class ClipboardService
         _rabbitMqService.OnFileUploaded(async fileContent =>
         {
             var userId = fileContent.UserId;
-            var clipboard = await GetClipboardByUserId(userId) ?? await CreateClipboard(userId);
-            await AddContentToClipboard(userId, clipboard.Id, fileContent.Type, fileContent.ContentId);
+            var clipboardId = await GetClipboardByUserId(userId) ?? await CreateClipboard(userId);
+            await AddContentToClipboard(userId, clipboardId, fileContent.Type, fileContent.ContentId);
         });
     }
 
-    public async Task<Clipboard> CreateClipboard(string userId)
+    public async Task<Guid> CreateClipboard(string userId)
     {
         var clipboardContract = await _clipboardRepository.CreateClipboardForUser(userId);
-        return new Clipboard(clipboardContract.Id, userId, new List<Record>());
+        return clipboardContract.Id;
     }
 
-    public async Task<Clipboard?> GetClipboardByUserId(string userId)
+    public async Task<Guid?> GetClipboardByUserId(string userId)
     {
         var clipboardContract = await _clipboardRepository.GetClipboardByUserId(userId);
-
-        if (clipboardContract == null)
-        {
-            return null;
-        }
-
-        var recordContracts = await _recordRepository.GetRecordsByClipboardId(clipboardContract.Id);
-        var records = recordContracts.Select(r => new Record(userId, r.Id, r.Date, r.Type, _encryptionService.Decrypt(r.Content))).ToList();
-
-        return new Clipboard(clipboardContract.Id, userId, records);
+        return clipboardContract?.Id;
     }
 
     public async Task<Record> AddContentToClipboard(string userId, Guid clipboardId, string type, string content)
