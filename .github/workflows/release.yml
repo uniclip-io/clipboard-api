@@ -27,10 +27,23 @@ jobs:
       - name: Test
         run: dotnet test --no-restore --verbosity normal
 
-  aws:
+  regression:
     needs: build
 
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Run Cucumber Regression
+        uses: greffgreff/run-java-tests-action@1.0
+        with:
+          repo: https://github.com/uniclip-io/test-suite.git
+          branch: master
+
+  aws:
+    needs: regression
+
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
