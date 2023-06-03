@@ -17,9 +17,15 @@ public class ClipboardController : ControllerBase
     }
 
     [HttpGet("/fetch/{userId}")]
-    public async Task<ActionResult<Clipboard>> GetClipboard(string userId)
+    public async Task<ActionResult<List<Record>>> GetRecords(string userId)
     {
-        return Ok(await _clipboardService.GetRecordsByUserId(userId));
+        var records = await _clipboardService.GetRecordsByUserId(userId);
+
+        if (records == null)
+        {
+            return NotFound();
+        }
+        return Ok(records);
     }
     
     [HttpPost("/post")]
