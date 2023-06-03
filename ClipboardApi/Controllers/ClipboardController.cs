@@ -19,13 +19,7 @@ public class ClipboardController : ControllerBase
     [HttpGet("/fetch/{userId}")]
     public async Task<ActionResult<Clipboard>> GetClipboard(string userId)
     {
-        var clipboard = await _clipboardService.GetClipboardByUserId(userId);
-
-        if (clipboard == null)
-        {
-            return NotFound();
-        }
-        return Ok(clipboard);
+        return Ok(await _clipboardService.GetRecordsByUserId(userId));
     }
     
     [HttpPost("/post")]

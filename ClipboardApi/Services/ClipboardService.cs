@@ -38,6 +38,19 @@ public class ClipboardService
         return clipboardContract?.Id;
     }
 
+    public async Task<List<Record>?> GetRecordsByUserId(string userId)
+    {
+        var clipboardId = await GetClipboardByUserId(userId);
+
+        if (clipboardId == null)
+        {
+            return null;
+        }
+        
+        var recordEntities = await _recordRepository.GetRecordsByClipboardId(clipboardId.Value);
+        return recordEntities.Select(r => new Record(userId, r.Id, r.Date, r.Type, r.Content)).ToList();
+    }
+    
     public async Task<Record> AddContentToClipboard(string userId, Guid clipboardId, string type, string content)
     {
         var encrypted = _encryptionService.Encrypt(content);
