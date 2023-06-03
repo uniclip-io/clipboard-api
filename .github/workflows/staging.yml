@@ -64,4 +64,4 @@ jobs:
 
       - name: Run new task
         run: |
-          aws ecs update-service --cluster ${{ secrets.AWS_CLUSTER_STAGING }} --service ${{ secrets.AWS_SERVICE_STAGING }} --force-new-deployment --task-definition ClipboardApiTask
+          aws ecs update-service --cluster ${{ secrets.AWS_CLUSTER_STAGING }} --service ${{ secrets.AWS_SERVICE_STAGING }} --force-new-deployment --task-definition ClipboardApiTask-Staging
