@@ -48,7 +48,7 @@ public class ClipboardService
         }
         
         var recordEntities = await _recordRepository.GetRecordsByClipboardId(clipboardId.Value);
-        return recordEntities.Select(r => new Record(userId, r.Id, r.Date, r.Type, r.Content)).ToList();
+        return recordEntities.Select(r => new Record(userId, r.Id, r.Date, r.Type, _encryptionService.Decrypt(r.Content))).ToList();
     }
     
     public async Task<Record> AddContentToClipboard(string userId, Guid clipboardId, string type, string content)
