@@ -49,6 +49,7 @@ spec:
                   name: clipboard-secrets
                   key: rabbitmq-username
 ---
+apiVersion: v1
 kind: Service
 metadata:
   name: clipboard-api-service
