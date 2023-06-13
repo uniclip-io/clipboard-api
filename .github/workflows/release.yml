@@ -75,7 +75,7 @@ jobs:
 
       - name: Deploy application
         run: |
-          sed -e 's|IMAGE_TAG|${{ github.ref_name }}|g' k8s/deployment.yml | kubectl apply -f -
+          sed -e 's|IMAGE_TAG|${{ github.ref_name }}|g' .k8s/deployment.yml | kubectl apply -f . --validate=false
 
       - name: Restart pod
         run: kubectl rollout restart deploy identity-app
