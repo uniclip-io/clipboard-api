@@ -39,7 +39,7 @@ jobs:
           repo: https://github.com/uniclip-io/test-suite.git
           branch: master
 
-  aws:
+  docker:
     needs: regression
 
     runs-on: ubuntu-latest
@@ -48,33 +48,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Build & push Docker image
+        uses: mr-smithers-excellent/docker-build-push@v6
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-north-1
+          image: greffnoah/clipboard-api
+          tags: ${{ github.ref_name }}
+          registry: docker.io
+          dockerfile: ClipboardApi/Dockerfile
+          username: greffnoah
+          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+  deploy:
+    needs: docker
 
-      - name: Push Image to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: uniclip/clipboard-api
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Generate kube configuration
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest -f ClipboardApi/Dockerfile .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          mkdir ~/.kube
+          touch ~/.kube/config
+          echo "${{ secrets.AKS_CONTEXT }}" >> ~/.kube/config
 
-      - name: Stop old task
+      - name: Deploy application
         run: |
-          TASK_ARN=$(aws ecs list-tasks --cluster ${{ secrets.AWS_CLUSTER }} --service-name ${{ secrets.AWS_SERVICE }} --desired-status RUNNING --query 'taskArns[0]' --output text)
-          if [ ! -z "$TASK_ARN" ]; then
-            echo $TASK_ARN 
-            aws ecs stop-task --task $TASK_ARN --cluster ${{ secrets.AWS_CLUSTER }}
-          fi
+          sed -e 's|IMAGE_TAG|${{ github.ref_name }}|g' k8s/deployment.yml | kubectl apply -f -
 
-      - name: Run new task
-        run: |
-          aws ecs update-service --cluster ${{ secrets.AWS_CLUSTER }} --service ${{ secrets.AWS_SERVICE }} --force-new-deployment --task-definition ClipboardApiTask
+      - name: Restart pod
+        run: kubectl rollout restart deploy identity-app

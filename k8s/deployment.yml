@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clipboard-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clipboard-api
+  template:
+    metadata:
+      labels:
+        app: clipboard-api
+    spec:
+      containers:
+        - name: clipboard-api
+          image: greffnoah/clipboard-api:IMAGE_TAG
+          ports:
+            - containerPort: 80
+          env:
+            - name: BUGSNAG_APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: clipboard-secrets
+                  key: bugsnag-apikey
+            - name: ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: clipboard-secrets
+                  key: encryption-key
+            - name: MONGODB_CONNECTION
+              valueFrom:
+                secretKeyRef:
+                  name: clipboard-secrets
+                  key: mongodb-connection
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: clipboard-secrets
+                  key: rabbitmq-password
+            - name: RABBITMQ_URI
+              valueFrom:
+                secretKeyRef:
+                  name: clipboard-secrets
+                  key: rabbitmq-uri
+            - name: RABBITMQ_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: clipboard-secrets
+                  key: rabbitmq-username
+---
+kind: Service
+metadata:
+  name: clipboard-api-service
+spec:
+  selector:
+    app: clipboard-api
+  ports:
+    - port: 80
